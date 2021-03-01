@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div>
+  <h1>FUnzio</h1>
+  <ul id = "lic">
+    <li>Test</li>
+  </ul>
+</div>
+<script>
+  let init = () => {
+    try {
+      const SpeechRecognition =
+              window.SpeechRecognition || window.webkitSpeechRecognition;
+      let ul = document.getElementById("lic");
+
+      if (SpeechRecognition !== undefined) {
+        let socket = new WebSocket("ws://127.0.0.1:6969/")
+        let recognition = new SpeechRecognition();
+        recognition.lang = "it-IT"
+        let finish = true
+
+        recognition.onstart = () => {
+          var li = document.createElement('li');
+          li.appendChild(document.createTextNode("stated to lisen"));
+          ul.appendChild(li);
+          console.log("stated to lisen");
+        };
+
+        recognition.onspeechend = () => {
+          var li = document.createElement('li');
+          li.appendChild(document.createTextNode(`I stopped listening `));
+          ul.appendChild(li);
+          console.log(`I stopped listening `);
+          recognition.stop();
+          setTimeout(() => {
+            recognition.start();
+          }, 3500)
+        };
+        recognition.onerror = (ev) => {
+          var li = document.createElement('li');
+          li.appendChild(document.createTextNode(ev.error));
+          ul.appendChild(li);
+          if (ev.error === "no-speech") {
+            setTimeout(() => {
+              recognition.start();
+            }, 500)
+          }
+          console.log(ev)
+        }
+
+        recognition.onresult = (result) => {
+          var li = document.createElement('li');
+          li.appendChild(document.createTextNode(result));
+          ul.appendChild(li);
+          socket.send(`${result.results[0][0].transcript}`);
+          setTimeout(() => {
+            recognition.start();
+          }, 200)
+        };
+        recognition.start();
+
+      } else {
+        var li = document.createElement('li');
+        li.appendChild(document.createTextNode("not supp"));
+        ul.appendChild(li);
+        console.log("not supp")
+      }
+    }catch(e){
+      init();
+      console.log(e);
+    }
+  }
+  init();
+
+</script>
+</body>
+</html>
