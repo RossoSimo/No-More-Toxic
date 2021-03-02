@@ -3,11 +3,9 @@ from twisted.internet import reactor
 from autobahn.twisted.websocket import WebSocketServerProtocol
 from autobahn.twisted.websocket import WebSocketServerFactory
 
-
 # or: from autobahn.asyncio.websocket import WebSocketServerProtocol
 
 class MyServerProtocol(WebSocketServerProtocol):
-
     def onConnect(self, request):
         print("Client connecting: {}".format(request.peer))
 
