@@ -2,7 +2,7 @@ from twisted.internet import reactor
 
 from autobahn.twisted.websocket import WebSocketServerProtocol
 from autobahn.twisted.websocket import WebSocketServerFactory
-
+import punizioni
 # or: from autobahn.asyncio.websocket import WebSocketServerProtocol
 
 class MyServerProtocol(WebSocketServerProtocol):
@@ -16,6 +16,9 @@ class MyServerProtocol(WebSocketServerProtocol):
         if isBinary:
             print("Binary message received: {} bytes".format(len(payload)))
         else:
+            punizione,time = punizioni.select_punizione()
+            print(time)
+            punizione(time)
             print("Text message received: {}".format(payload.decode('utf8')))
 
     def onClose(self, wasClean, code, reason):
